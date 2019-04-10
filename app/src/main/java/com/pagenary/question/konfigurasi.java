@@ -8,4 +8,5 @@ public class konfigurasi {
     public static final String TAG_JSON_ARRAY = "result";
     public static final String TAG_SOAL = "soal";
     public static final String TAG_ID = "id_kategory";
+    public static final String TAG_ID_SOAL = "id";
 }

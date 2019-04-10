@@ -45,7 +45,7 @@ public class RecordingListActivity extends AppCompatActivity {
     private void fetchRecordings() {
 
         File root = android.os.Environment.getExternalStorageDirectory();
-        String path = root.getAbsolutePath() + "/VoiceRecorderSimplifiedCoding/Audios/"+folder;
+        String path = root.getAbsolutePath() + "/VoiceRecorderSimplifiedCoding/Audios/";
         Log.d("Files", "Path: " + path);
         File directory = new File(path);
         File[] files = directory.listFiles();

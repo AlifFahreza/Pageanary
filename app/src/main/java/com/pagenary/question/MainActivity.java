@@ -51,6 +51,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonArray;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -82,12 +84,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int b, i = 1;
     private int lastProgress = 0;
     private Handler mHandler = new Handler();
-    private int RECORD_AUDIO_REQUEST_CODE = 123;
+    private int RECORD_AUDIO_REQUEST_CODE = 123, coba;
     private boolean isPlaying = false;
     private TextView kategorii, soalkini;
     private String mPostKeyNama = null;
+    private int soalnext;
     private String mPostKeyID = null;
-    private String idKtegori;
+    private String idKtegori, ID_SOAL;
     private String date;
     private int quizCount;
     private String JSON_STRING, pertanyaan;
@@ -155,47 +158,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pertanyaans();
-            }
-        });
-
-        previousButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pertanyaans();
-            }
-        });
-
         getJSON();
         setDate();
         loadJumlah();
-    }
-
-    private void pertanyaans() {
-        if (mPostKeyID.equals(idKtegori)) {
-            quizQuestion.setText(pertanyaan);
-        }
-
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mPostKeyID.equals(idKtegori)) {
-                    quizQuestion.setText(pertanyaan);
-                }
-            }
-        });
-
-        previousButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mPostKeyID.equals(idKtegori)) {
-                    quizQuestion.setText(pertanyaan);
-                }
-            }
-        });
     }
 
     private void loadJumlah() {
@@ -297,7 +262,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 jsonChildNode = jsonArray.getJSONObject(i);
                 pertanyaan = jsonChildNode.getString(konfigurasi.TAG_SOAL);
                 idKtegori = jsonChildNode.getString(konfigurasi.TAG_ID);
-                newItemObject = new QuizWrapper(soal, idKtegori);
+                ID_SOAL = jsonChildNode.getString(konfigurasi.TAG_ID_SOAL);
+                newItemObject = new QuizWrapper(pertanyaan, idKtegori, ID_SOAL);
                 jsonObject.add(newItemObject);
 
                 pertanyaans();
@@ -308,6 +274,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         return jsonObject;
     }
+
+    private void pertanyaans() {
+        if (mPostKeyID.equals(idKtegori)) {
+            quizQuestion.setText(pertanyaan);
+            soalnext = Integer.parseInt(ID_SOAL);
+        }
+
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

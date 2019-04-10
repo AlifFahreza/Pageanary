@@ -3,10 +3,20 @@ package com.pagenary.question;
 public class QuizWrapper {
     private String soal;
     private String id_kategory;
+    private String id;
 
-    public QuizWrapper(String soal, String id_kategory) {
+    public QuizWrapper(String soal, String id_kategory, String id) {
         this.soal = soal;
         this.id_kategory = id_kategory;
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getId_kategory() {
