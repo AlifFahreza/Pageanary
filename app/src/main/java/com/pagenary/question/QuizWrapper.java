@@ -4,11 +4,13 @@ public class QuizWrapper {
     private String soal;
     private String id_kategory;
     private String id;
+    private int urutan;
 
-    public QuizWrapper(String soal, String id_kategory, String id) {
+    public QuizWrapper(String soal, String id_kategory, String id, int urutan) {
         this.soal = soal;
         this.id_kategory = id_kategory;
         this.id = id;
+        this.urutan = urutan;
     }
 
     public String getId() {
@@ -33,5 +35,13 @@ public class QuizWrapper {
 
     public void setSoal(String soal) {
         this.soal = soal;
+    }
+
+    public int getUrutan() {
+        return urutan;
+    }
+
+    public void setUrutan(int urutan) {
+        this.urutan = urutan;
     }
 }

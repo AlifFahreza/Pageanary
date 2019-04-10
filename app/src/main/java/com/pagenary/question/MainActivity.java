@@ -72,7 +72,7 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
+    private static final String TAG = "MainActivity";
     private Chronometer chronometer;
     private ImageView imageViewRecord, imageViewPlay, imageViewStop;
     private SeekBar seekBar;
@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button nextButton, previousButton, jawaban;
     private String namaFolder, jumlah, kini;
     private TextView totalSoal;
+    private int urutanSekarang = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,6 +159,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(urutanSekarang < parsedObject.size() - 1){
+                    urutanSekarang++;
+                    setPertanyaan(urutanSekarang);
+                }
+
+            }
+        });
+
+        previousButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(urutanSekarang > 0){
+                    urutanSekarang--;
+                    setPertanyaan(urutanSekarang);
+                }
+
+            }
+        });
+
         getJSON();
         setDate();
         loadJumlah();
@@ -205,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 list.add(data);
 
-                totalSoal.setText("" + jumlah);
+
             }
 
         } catch (JSONException e) {
@@ -230,6 +255,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (parsedObject == null) {
                     return;
                 }
+                totalSoal.setText("" + parsedObject.size());
+                setPertanyaan(urutanSekarang);
             }
 
             @Override
@@ -256,6 +283,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        int urutan = 1;
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonChildNode = null;
             try {
@@ -263,10 +291,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 pertanyaan = jsonChildNode.getString(konfigurasi.TAG_SOAL);
                 idKtegori = jsonChildNode.getString(konfigurasi.TAG_ID);
                 ID_SOAL = jsonChildNode.getString(konfigurasi.TAG_ID_SOAL);
-                newItemObject = new QuizWrapper(pertanyaan, idKtegori, ID_SOAL);
-                jsonObject.add(newItemObject);
-
-                pertanyaans();
+                if(idKtegori.equals(mPostKeyID)){
+                    newItemObject = new QuizWrapper(pertanyaan, idKtegori, ID_SOAL, urutan);
+                    urutan++;
+                    jsonObject.add(newItemObject);
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -275,18 +304,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return jsonObject;
     }
 
-    private void pertanyaans() {
-        if (mPostKeyID.equals(idKtegori)) {
-            quizQuestion.setText(pertanyaan);
-            soalnext = Integer.parseInt(ID_SOAL);
-        }
-
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
+    private void setPertanyaan(int urutan) {
+        Log.d(TAG, "setPertanyaan: " + parsedObject);
+        soalkini.setText(parsedObject.get(urutan).getUrutan() + "");
+        quizQuestion.setText(parsedObject.get(urutan).getSoal());
+        soalnext = Integer.parseInt(parsedObject.get(urutan).getId());
     }
 
 
