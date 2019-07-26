@@ -16,18 +16,18 @@ import java.util.ArrayList;
 public class RecordingListActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private String folder = null;
     private RecyclerView recyclerViewRecordings;
     private ArrayList<Recording> recordingArraylist;
     private RecordingAdapter recordingAdapter;
     private TextView textViewNoRecordings;
+    private String mPostKeyNamaSoal = null;
+    private String mPostKeyNamaFolder = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recording_list);
 
-        folder = getIntent().getExtras().getString("folder");
         recordingArraylist = new ArrayList<Recording>();
 
         initViews();
@@ -36,16 +36,10 @@ public class RecordingListActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public void onBackPressed() {
-        finish();
-        overridePendingTransition(R.anim.topanimation, R.anim.bottomanimation);
-    }
-
     private void fetchRecordings() {
 
         File root = android.os.Environment.getExternalStorageDirectory();
-        String path = root.getAbsolutePath() + "/VoiceRecorderSimplifiedCoding/Audios/";
+        String path = root.getAbsolutePath() + "/VoiceRecorderSimplifiedCoding/Audios/"+mPostKeyNamaFolder+"/"+mPostKeyNamaSoal;
         Log.d("Files", "Path: " + path);
         File directory = new File(path);
         File[] files = directory.listFiles();
@@ -56,7 +50,7 @@ public class RecordingListActivity extends AppCompatActivity {
 
                 Log.d("Files", "FileName:" + files[i].getName());
                 String fileName = files[i].getName();
-                String recordingUri = root.getAbsolutePath() + "/VoiceRecorderSimplifiedCoding/Audios/"+folder+"/" + fileName;
+                String recordingUri = root.getAbsolutePath() + "/VoiceRecorderSimplifiedCoding/Audios/"+mPostKeyNamaFolder+"/"+mPostKeyNamaSoal+"/" + fileName;
 
                 Recording recording = new Recording(recordingUri,fileName,false);
                 recordingArraylist.add(recording);
@@ -95,6 +89,8 @@ public class RecordingListActivity extends AppCompatActivity {
         recyclerViewRecordings.setHasFixedSize(true);
 
         textViewNoRecordings = (TextView) findViewById(R.id.textViewNoRecordings);
+        mPostKeyNamaFolder = getIntent().getExtras().getString("folder");
+        mPostKeyNamaSoal = getIntent().getExtras().getString("soal");
 
     }
 
@@ -114,3 +110,4 @@ public class RecordingListActivity extends AppCompatActivity {
     }
 
 }
+

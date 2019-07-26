@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private List<QuizWrapper> parsedObject;
     private QuizWrapper firstQuestion;
     private Button nextButton, previousButton, jawaban;
-    private String namaFolder, jumlah, kini;
+    private String namaFolder, namaSoal, jumlah, kini;
     private TextView totalSoal;
     private int urutanSekarang = 0;
 
@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void setDate() {
         Date today = Calendar.getInstance().getTime();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("ddMMMyyyyhhmmss");
         date = formatter.format(today);
     }
 
@@ -142,22 +142,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mPostKeyID = getIntent().getExtras().getString("id_kategory");
 
         kategorii.setText(mPostKeyNama);
-        namaFolder = kategorii.getText().toString();
         jawaban = findViewById(R.id.jawaban);
 
         imageViewRecord.setOnClickListener(this);
         imageViewStop.setOnClickListener(this);
         imageViewPlay.setOnClickListener(this);
-
-        jawaban.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Intent intent = new Intent(MainActivity.this, RecordingListActivity.class);
-                intent.putExtra("folder", namaFolder);
-                startActivity(intent);
-                overridePendingTransition(R.anim.bottomanimation, R.anim.topanimation);
-            }
-        });
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -309,6 +298,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         soalkini.setText(parsedObject.get(urutan).getUrutan() + "");
         quizQuestion.setText(parsedObject.get(urutan).getSoal());
         soalnext = Integer.parseInt(parsedObject.get(urutan).getId());
+        namaSoal = quizQuestion.getText().toString();
+        namaFolder = kategorii.getText().toString();
+
+        jawaban.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Intent intent = new Intent(MainActivity.this, RecordingListActivity.class);
+                intent.putExtra("folder", namaFolder);
+                intent.putExtra("soal", namaSoal);
+                startActivity(intent);
+                overridePendingTransition(R.anim.bottomanimation, R.anim.topanimation);
+            }
+        });
     }
 
 
@@ -329,7 +331,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-
         }
 
     }
@@ -343,17 +344,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
 
-        if (view == imageViewRecord) {
+        if( view == imageViewRecord ){
             prepareforRecording();
             startRecording();
-        } else if (view == imageViewStop) {
+        }else if( view == imageViewStop ){
             prepareforStop();
             stopRecording();
-        } else if (view == imageViewPlay) {
-            if (!isPlaying && fileName != null) {
+        }else if( view == imageViewPlay ){
+            if( !isPlaying && fileName != null ){
                 isPlaying = true;
                 startPlaying();
-            } else {
+            }else{
                 isPlaying = false;
                 stopPlaying();
             }
@@ -392,7 +393,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //showing the play button
         imageViewPlay.setImageResource(R.drawable.ic_play);
         chronometer.stop();
-
     }
 
     private void startRecording() {
@@ -400,13 +400,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         File root = android.os.Environment.getExternalStorageDirectory();
-        File file = new File(root.getAbsolutePath() + "/VoiceRecorderSimplifiedCoding/Audios/" + namaFolder);
+        File file = new File(root.getAbsolutePath() + "/VoiceRecorderSimplifiedCoding/Audios/"+namaFolder+"/"+namaSoal);
         if (!file.exists()) {
             file.mkdirs();
         }
 
-        fileName = root.getAbsolutePath() + "/VoiceRecorderSimplifiedCoding/Audios/" + namaFolder + "/" + String.valueOf(date + ".mp3");
-        Log.d("filename", fileName);
+        fileName =  root.getAbsolutePath() + "/VoiceRecorderSimplifiedCoding/Audios/"+namaFolder+"/"+namaSoal+"/" + String.valueOf(date + ".mp3");
+        Log.d("filename",fileName);
         mRecorder.setOutputFile(fileName);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
@@ -416,7 +416,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         lastProgress = 0;
         seekBar.setProgress(0);
         stopPlaying();
@@ -425,7 +424,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         chronometer.setBase(SystemClock.elapsedRealtime());
         chronometer.start();
     }
-
 
     private void stopRecording() {
         try {
@@ -475,7 +473,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (mPlayer != null && fromUser) {
+                if( mPlayer!=null && fromUser ){
                     mPlayer.seekTo(progress);
                     chronometer.setBase(SystemClock.elapsedRealtime() - mPlayer.getCurrentPosition());
                     lastProgress = progress;

@@ -15,10 +15,6 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * Created by Manish on 10/3/2017.
- */
-
 public class RecordingAdapter  extends RecyclerView.Adapter<RecordingAdapter.ViewHolder>{
 
     private Context context;
@@ -47,7 +43,6 @@ public class RecordingAdapter  extends RecyclerView.Adapter<RecordingAdapter.Vie
     }
 
     private void setUpData(ViewHolder holder, int position) {
-
         Recording recording = recordingArrayList.get(position);
         holder.textViewName.setText(recording.getFileName());
 
@@ -63,7 +58,6 @@ public class RecordingAdapter  extends RecyclerView.Adapter<RecordingAdapter.Vie
         }
 
         holder.manageSeekBar(holder);
-
     }
 
     @Override
