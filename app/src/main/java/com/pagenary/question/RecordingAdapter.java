@@ -1,7 +1,10 @@
 package com.pagenary.question;
 
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.media.MediaPlayer;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionManager;
@@ -12,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -38,7 +43,12 @@ public class RecordingAdapter  extends RecyclerView.Adapter<RecordingAdapter.Vie
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
+        Recording recording = recordingArrayList.get(position);
+        String uri = recording.getUri();
+
         setUpData(holder,position);
+        holder.itemView.setTag(uri);
+
 
     }
 
@@ -85,44 +95,46 @@ public class RecordingAdapter  extends RecyclerView.Adapter<RecordingAdapter.Vie
             imageViewPlay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    int position = getAdapterPosition();
-                    Recording recording = recordingArrayList.get(position);
+                int position = getAdapterPosition();
+                Recording recording = recordingArrayList.get(position);
 
-                    recordingUri = recording.getUri();
+                recordingUri = recording.getUri();
 
-                    if( isPlaying ){
+                if( isPlaying ){
+                    stopPlaying();
+                    if( position == last_index ){
+                        recording.setPlaying(false);
                         stopPlaying();
-                        if( position == last_index ){
-                            recording.setPlaying(false);
-                            stopPlaying();
-                            notifyItemChanged(position);
-                        }else{
-                            markAllPaused();
-                            recording.setPlaying(true);
-                            notifyItemChanged(position);
-                            startPlaying(recording,position);
-                            last_index = position;
-                        }
-
-                    }else {
-                        if( recording.isPlaying() ){
-                            recording.setPlaying(false);
-                            stopPlaying();
-                            Log.d("isPlayin","True");
-                        }else {
-                            startPlaying(recording,position);
-                            recording.setPlaying(true);
-                            seekBar.setMax(mPlayer.getDuration());
-                            Log.d("isPlayin","False");
-                        }
                         notifyItemChanged(position);
+                    }else{
+                        markAllPaused();
+                        recording.setPlaying(true);
+                        notifyItemChanged(position);
+                        startPlaying(recording,position);
                         last_index = position;
                     }
+
+                } else {
+                    if( recording.isPlaying() ){
+                        recording.setPlaying(false);
+                        stopPlaying();
+                        Log.d("isPlayin","True");
+                    }else {
+                        startPlaying(recording,position);
+                        recording.setPlaying(true);
+                        seekBar.setMax(mPlayer.getDuration());
+                        Log.d("isPlayin","False");
+                    }
+                    notifyItemChanged(position);
+                    last_index = position;
+                }
 
                 }
 
             });
+
         }
+
         public void manageSeekBar(ViewHolder holder){
             holder.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
@@ -201,9 +213,8 @@ public class RecordingAdapter  extends RecyclerView.Adapter<RecordingAdapter.Vie
                 }
             });
 
-
-
         }
 
     }
+
 }

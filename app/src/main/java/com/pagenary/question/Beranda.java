@@ -21,8 +21,8 @@ import java.util.List;
 
 public class Beranda extends AppCompatActivity {
 
-    private static final String URL_GET_LINK = "http://pageanary.000webhostapp.com/beranda.php";
     private RecyclerView recyclerView;
+    private konfigurasi konfigurasi;
     List<Product> productList;
 
     @Override
@@ -34,12 +34,13 @@ public class Beranda extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        konfigurasi = new konfigurasi();
         productList = new ArrayList<>();
         loadProducts();
     }
 
     private void loadProducts() {
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL_GET_LINK,
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, konfigurasi.URL_GET_LINK,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {

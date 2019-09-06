@@ -14,7 +14,9 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.Menu;
@@ -97,10 +99,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int currentQuizQuestion;
     private List<QuizWrapper> parsedObject;
     private QuizWrapper firstQuestion;
-    private Button nextButton, previousButton, jawaban;
+    private Button nextButton, previousButton, jawaban, btnBack;
     private String namaFolder, namaSoal, jumlah, kini;
     private TextView totalSoal;
     private int urutanSekarang = 0;
+    private boolean recorded_once = false;
+    private Intent intentList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,8 +115,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             getPermissionToRecordAudio();
         }
 
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            urutanSekarang = bundle.getInt("urutan_skrg");
+        }
+
+        Log.d("Getter urutanSkrg :",  urutanSekarang + "");
+
         initViews();
 
+        intentList = new Intent(MainActivity.this, RecordingListActivity.class);
+        Log.d("onCreate Folder : ", namaFolder + " - Soal : " + namaSoal + " - Urutan : " + urutanSekarang);
     }
 
     public void setDate() {
@@ -127,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         soalkini = (TextView) findViewById(R.id.soalkini);
         nextButton = (Button) findViewById(R.id.nextquiz);
         previousButton = (Button) findViewById(R.id.previousquiz);
+        btnBack = findViewById(R.id.btn_back);
 
         linearLayoutRecorder = (LinearLayout) findViewById(R.id.linearLayoutRecorder);
         totalSoal = (TextView) findViewById(R.id.jumlahsoal);
@@ -154,7 +168,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 if(urutanSekarang < parsedObject.size() - 1){
                     urutanSekarang++;
-                    setPertanyaan(urutanSekarang);
+                    Log.d("Getter btnNext :", urutanSekarang + "");
+                    Intent intent = getIntent();
+                    intent.putExtra("urutan_skrg", urutanSekarang);
+                    finish();
+                    startActivity(intent);
+//                    setPertanyaan(urutanSekarang);
                 }
 
             }
@@ -166,13 +185,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 if(urutanSekarang > 0){
                     urutanSekarang--;
-                    setPertanyaan(urutanSekarang);
+                    Log.d("Getter btnNext :", urutanSekarang + "");
+                    Intent intent = getIntent();
+                    intent.putExtra("urutan_skrg", urutanSekarang);
+                    finish();
+                    startActivity(intent);
+//                    setPertanyaan(urutanSekarang);
                 }
 
             }
         });
 
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+                overridePendingTransition(R.anim.leftanimation,
+                        R.anim.rightanimation);
+            }
+        });
+
+        nextButton.setClickable(false);
+        previousButton.setClickable(false);
+
         getJSON();
+
         setDate();
         loadJumlah();
     }
@@ -246,6 +283,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 totalSoal.setText("" + parsedObject.size());
                 setPertanyaan(urutanSekarang);
+
             }
 
             @Override
@@ -304,13 +342,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         jawaban.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Intent intent = new Intent(MainActivity.this, RecordingListActivity.class);
-                intent.putExtra("folder", namaFolder);
-                intent.putExtra("soal", namaSoal);
-                startActivity(intent);
+                startActivity(intentList);
                 overridePendingTransition(R.anim.bottomanimation, R.anim.topanimation);
             }
         });
+
+        intentList.putExtra("folder", namaFolder);
+        intentList.putExtra("soal", namaSoal);
+        nextButton.setClickable(true);
+        previousButton.setClickable(true);
+        Log.d("setPertanyaan Folder : ", namaFolder + " - Soal : " + namaSoal + " - Urutan : " + urutanSekarang);
     }
 
 
@@ -345,11 +386,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
 
         if( view == imageViewRecord ){
-            prepareforRecording();
-            startRecording();
+//            prepareforRecording();
+//            startRecording();
+            if(recorded_once) {
+                recorded_once = false;
+                restartActivity();
+            } else {
+                prepareforRecording();
+                startRecording();
+            }
+
         }else if( view == imageViewStop ){
             prepareforStop();
             stopRecording();
+            recorded_once = true;
         }else if( view == imageViewPlay ){
             if( !isPlaying && fileName != null ){
                 isPlaying = true;
@@ -365,6 +415,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void prepareforStop() {
         TransitionManager.beginDelayedTransition(linearLayoutRecorder);
         imageViewRecord.setVisibility(View.VISIBLE);
+        imageViewRecord.setImageResource(R.drawable.ic_replay);
         imageViewStop.setVisibility(View.GONE);
         linearLayoutPlay.setVisibility(View.VISIBLE);
     }
@@ -393,6 +444,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //showing the play button
         imageViewPlay.setImageResource(R.drawable.ic_play);
         chronometer.stop();
+
     }
 
     private void startRecording() {
@@ -400,13 +452,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         File root = android.os.Environment.getExternalStorageDirectory();
-        File file = new File(root.getAbsolutePath() + "/VoiceRecorderSimplifiedCoding/Audios/"+namaFolder+"/"+namaSoal);
+        File file = new File(root.getAbsolutePath() + "/VoiceRecorderSimplifiedCoding/Audios/" + namaFolder + "/" + namaSoal);
         if (!file.exists()) {
             file.mkdirs();
         }
 
-        fileName =  root.getAbsolutePath() + "/VoiceRecorderSimplifiedCoding/Audios/"+namaFolder+"/"+namaSoal+"/" + String.valueOf(date + ".mp3");
-        Log.d("filename",fileName);
+        fileName = root.getAbsolutePath() + "/VoiceRecorderSimplifiedCoding/Audios/" + namaFolder + "/" + namaSoal + "/" + String.valueOf(date + ".mp3");
+        Log.d("filename", fileName);
         mRecorder.setOutputFile(fileName);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
@@ -423,6 +475,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //starting the chronometer
         chronometer.setBase(SystemClock.elapsedRealtime());
         chronometer.start();
+    }
+
+    public void restartActivity() {
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 
     private void stopRecording() {
@@ -468,7 +526,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 chronometer.stop();
             }
         });
-
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override

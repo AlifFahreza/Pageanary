@@ -23,71 +23,91 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <Chronometer
-                android:id="@+id/chronometerTimer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textColor="#fff"/>
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/kategorii"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#fff"
-                android:textSize="16sp"
-                android:layout_marginTop="20dp"/>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="7dp"
-                android:layout_gravity="center_horizontal"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="QUESTION"
-                    android:textColor="#fff"
-                    android:textSize="16sp" />
+                    android:paddingTop="20dp"
+                    android:paddingBottom="10dp"
+                    android:orientation="vertical"
+                    android:gravity="center">
 
-                <TextView
-                    android:id="@+id/soalkini"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:textColor="#fff"
-                    android:textSize="16sp"/>
+                    <Chronometer
+                        android:id="@+id/chronometerTimer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:textColor="#fff"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="OF"
-                    android:layout_marginLeft="5dp"
-                    android:textColor="#fff"
-                    android:textSize="16sp"/>
+                    <TextView
+                        android:id="@+id/kategorii"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:textSize="16sp"
+                        android:layout_marginTop="20dp"/>
 
-                <TextView
-                    android:id="@+id/jumlahsoal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:textColor="#fff"
-                    android:textSize="16sp"/>
-            </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="7dp"
+                        android:gravity="center"
+                        android:layout_gravity="center_horizontal"
+                        android:orientation="horizontal">
 
-            <TextView
-                android:layout_marginTop="10dp"
-                android:id="@+id/quiz_question"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:textColor="#fff"
-                android:textAlignment="center"
-                android:textSize="18sp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="QUESTION"
+                            android:textColor="#fff"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/soalkini"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:textColor="#fff"
+                            android:textSize="16sp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="OF"
+                            android:layout_marginLeft="5dp"
+                            android:textColor="#fff"
+                            android:textSize="16sp"/>
+
+                        <TextView
+                            android:id="@+id/jumlahsoal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:textColor="#fff"
+                            android:textSize="16sp"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_marginTop="10dp"
+                        android:id="@+id/quiz_question"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="#fff"
+                        android:textAlignment="center"
+                        android:textSize="18sp"/>
+
+                </LinearLayout>
+
+            </ScrollView>
 
         </LinearLayout>
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -161,10 +181,10 @@
                 android:textColor="#fff"
                 android:textStyle="bold"
                 android:layout_marginBottom="5dp"
-                android:background="@drawable/btn_next"/>
+                android:background="@drawable/btn_primary"/>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
@@ -178,7 +198,18 @@
                     android:textColor="#fff"
                     android:textStyle="bold"
                     android:layout_marginRight="5dp"
-                    android:background="@drawable/btn_next" />
+                    android:background="@drawable/btn_primary"/>
+
+                <Button
+                    android:id="@+id/btn_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:text="Back"
+                    android:textColor="#fff"
+                    android:textStyle="bold"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/btn_danger" />
 
                 <Button
                     android:id="@+id/nextquiz"
@@ -189,7 +220,8 @@
                     android:textColor="#fff"
                     android:textStyle="bold"
                     android:layout_marginLeft="5dp"
-                    android:background="@drawable/btn_next" />
+                    android:background="@drawable/btn_primary" />
+
             </LinearLayout>
 
         </LinearLayout>

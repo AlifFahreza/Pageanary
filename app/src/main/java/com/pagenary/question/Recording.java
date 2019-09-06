@@ -27,4 +27,5 @@ public class Recording {
     public void setPlaying(boolean playing){
         this.isPlaying = playing;
     }
+
 }
